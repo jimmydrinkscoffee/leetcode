@@ -1,7 +1,9 @@
 package main
 
 import (
+	"math"
 	"sort"
+	"strconv"
 )
 
 // func closeStrings(word1 string, word2 string) bool {
@@ -60,5 +62,86 @@ func closeStrings(word1 string, word2 string) bool {
 }
 
 func equalPairs(grid [][]int) int {
-	return 0
+	m := make(map[string]int)
+	for _, r := range grid {
+		s := ""
+		for _, c := range r {
+			s += "_" + strconv.Itoa((c))
+		}
+		m[s]++
+	}
+	l := len(grid[0])
+	cl := len(grid)
+	ans := 0
+	for i := 0; i < cl; i++ {
+		s := ""
+		for j := 0; j < l; j++ {
+			s += "_" + strconv.Itoa((grid[j][i]))
+		}
+		if val, ok := m[s]; ok {
+			ans += val
+		}
+	}
+	return ans
+}
+
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+func maxDepth(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+
+	return 1 + max(maxDepth(root.Left), maxDepth(root.Right))
+}
+
+func leafSimilar(root1 *TreeNode, root2 *TreeNode) bool {
+	var s1 []int
+	var s2 []int
+	s1 = leafs(root1, s1)
+	s2 = leafs(root2, s2)
+	l := len(s1)
+	if l != len(s2) {
+		return false
+	}
+	for i := 0; i < l; i++ {
+		if s1[i] != s2[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func leafs(r *TreeNode, l []int) []int {
+	if r.Left == nil && r.Right == nil {
+		l = append(l, r.Val)
+		return l
+	}
+	if r.Left != nil {
+		l = leafs(r.Left, l)
+	}
+	if r.Right != nil {
+		l = leafs(r.Right, l)
+	}
+	return l
+}
+
+func goodNodes(root *TreeNode) int {
+	return goodNode(root, math.MinInt32)
+}
+
+func goodNode(r *TreeNode, mx int) int {
+	if r == nil {
+		return 0
+	}
+
+	if r.Val >= mx {
+		return 1 + goodNode(r.Left, r.Val) + goodNode(r.Right, r.Val)
+	}
+
+	return goodNode(r.Left, mx) + goodNode(r.Right, mx)
 }
