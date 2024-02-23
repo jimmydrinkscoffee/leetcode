@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 	cur := &ListNode{
@@ -111,4 +113,78 @@ func zigZag(n *TreeNode, left bool, cur int, ans *int) {
 		zigZag(n.Left, true, cur+1, ans)
 		zigZag(n.Right, false, 2, ans)
 	}
+}
+
+func searchBST(root *TreeNode, val int) *TreeNode {
+	if root == nil || root.Val == val {
+		return root
+	}
+
+	if root.Val > val {
+		return searchBST(root.Left, val)
+	}
+
+	return searchBST(root.Right, val)
+}
+
+func deleteNode(root *TreeNode, key int) *TreeNode {
+	if root == nil {
+		return root
+	}
+
+	if root.Val != key {
+		root.Left = deleteNode(root.Left, key)
+		root.Right = deleteNode(root.Right, key)
+		return root
+	}
+
+	if root.Left != nil {
+		if root.Left.Right == nil {
+			root.Val = root.Left.Val
+			root.Left = root.Left.Left
+			return root
+		}
+
+		if m := maxNode(root.Left); m != nil {
+			root.Val = m.Val
+			return root
+		}
+	}
+
+	if root.Right != nil {
+		if root.Right.Left == nil {
+			root.Val = root.Right.Val
+			root.Right = root.Right.Right
+			return root
+		}
+
+		if m := minNode(root.Right); m != nil {
+			root.Val = m.Val
+			return root
+		}
+	}
+
+	return nil
+}
+
+func minNode(n *TreeNode) *TreeNode {
+	cur := n
+	for cur.Left.Left != nil {
+		cur = cur.Left
+	}
+
+	m := cur.Left
+	cur.Left = m.Right
+	return m
+}
+
+func maxNode(n *TreeNode) *TreeNode {
+	cur := n
+	for cur.Right.Right != nil {
+		cur = cur.Right
+	}
+
+	m := cur.Right
+	cur.Right = m.Left
+	return m
 }
