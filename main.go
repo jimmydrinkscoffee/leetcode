@@ -188,3 +188,40 @@ func maxNode(n *TreeNode) *TreeNode {
 	cur.Right = m.Left
 	return m
 }
+
+func minCostClimbingStairs(cost []int) int {
+	pi_1 := 0
+	pi_2 := 0
+
+	for i := 2; i <= len(cost); i++ {
+		pi_1, pi_2 = pi_2, min(pi_1+cost[i-2], pi_2+cost[i-1])
+	}
+
+	return pi_2
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func lowestCommonAncestor(r, p, q *TreeNode) *TreeNode {
+	if r == nil || r == p || r == q {
+		return r
+	}
+
+	l := lowestCommonAncestor(r.Left, p, q)
+	rt := lowestCommonAncestor(r.Right, p, q)
+
+	if l != nil && rt != nil {
+		return r
+	}
+
+	if l != nil {
+		return l
+	}
+
+	return rt
+}
