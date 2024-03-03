@@ -225,3 +225,29 @@ func lowestCommonAncestor(r, p, q *TreeNode) *TreeNode {
 
 	return rt
 }
+
+func myPow(x float64, n int) float64 {
+	if x == 0 {
+		return 0
+	}
+	if x == 1 || n == 0 {
+		return 1
+	}
+	p := n
+	if p < 0 {
+		p = -p
+	}
+	res := x * x
+	ck := 2
+	for ck < p {
+		res = res * res
+		ck *= 2
+	}
+	for i := p; i < ck; i++ {
+		res /= x
+	}
+	if p/n < 0 {
+		return 1 / res
+	}
+	return res
+}
