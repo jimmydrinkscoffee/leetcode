@@ -251,3 +251,172 @@ func myPow(x float64, n int) float64 {
 	}
 	return res
 }
+
+func rightSideView(root *TreeNode) []int {
+	return bfsMostRight(root)
+}
+
+func mostRight(arr []*TreeNode) []int {
+	l := len(arr)
+	if l <= 0 {
+		return []int{}
+	}
+
+	res := []int{arr[l-1].Val}
+
+	var nexts []*TreeNode
+	for _, n := range arr {
+		if n.Left != nil {
+			nexts = append(nexts, n.Left)
+		}
+		if n.Right != nil {
+			nexts = append(nexts, n.Right)
+		}
+	}
+
+	res = append(res, mostRight(nexts)...)
+
+	return res
+}
+
+func bfsMostRight(r *TreeNode) []int {
+	if r == nil {
+		return []int{}
+	}
+
+	var res []int
+	q := []*TreeNode{r}
+	for len(q) > 0 {
+		l := len(q)
+		var mr int
+		for i := 0; i < l; i++ {
+			mr = q[i].Val
+			if q[i].Left != nil {
+				q = append(q, q[i].Left)
+			}
+			if q[i].Right != nil {
+				q = append(q, q[i].Right)
+			}
+		}
+		q = q[l:]
+		res = append(res, mr)
+	}
+
+	return res
+}
+
+func maxLevelSum(r *TreeNode) int {
+	m := r.Val
+	mLv := 1
+	q := []*TreeNode{}
+	if r.Left != nil {
+		q = append(q, r.Left)
+	}
+	if r.Right != nil {
+		q = append(q, r.Right)
+	}
+	curLv := 1
+	l := len(q)
+	for l > 0 {
+		curLv++
+		s := 0
+		for i := 0; i < l; i++ {
+			s += q[i].Val
+			if q[i].Left != nil {
+				q = append(q, q[i].Left)
+			}
+			if q[i].Right != nil {
+				q = append(q, q[i].Right)
+			}
+		}
+		if s > m {
+			m = s
+			mLv = curLv
+		}
+		q = q[l:]
+		l = len(q)
+	}
+	return mLv
+}
+
+func canVisitAllRooms(rooms [][]int) bool {
+	cur := rooms[0]
+
+	m := make(map[int]bool)
+	m[0] = true
+	for _, r := range cur {
+		m[r] = true
+	}
+
+	for len(cur) > 0 {
+		l := len(cur)
+		for i := 0; i < l; i++ {
+			for _, r := range rooms[cur[i]] {
+				if _, ok := m[r]; !ok {
+					m[r] = true
+					cur = append(cur, r)
+				}
+			}
+		}
+
+		cur = cur[l:]
+	}
+
+	return len(rooms) == len(m)
+}
+
+func findCircleNum(isConnected [][]int) int {
+	l := len(isConnected)
+	vst := make([]bool, len(isConnected))
+	res := 0
+	var dfs func(int) int
+	dfs = func(i int) int {
+		if vst[i] {
+			return 0
+		}
+		vst[i] = true
+		for j := 0; j < l; j++ {
+			if isConnected[i][j] == 1 {
+				dfs(j)
+			}
+		}
+		return 1
+	}
+	for i := 0; i < l; i++ {
+		res += dfs(i)
+	}
+	return res
+}
+
+func minReorder(n int, connections [][]int) int {
+	m := make(map[int][]int)
+	for _, c := range connections {
+		m[c[0]] = append(m[c[0]], c[1])
+		m[c[1]] = append(m[c[1]], -c[0])
+	}
+	res := 0
+	vst := make([]bool, n)
+	var dfs func(int)
+	dfs = func(target int) {
+		vst[target] = true
+		for _, v := range m[target] {
+			u := abs(v)
+			if vst[u] {
+				continue
+			}
+			if v > 0 {
+				res++
+			}
+			dfs(u)
+		}
+	}
+	dfs(0)
+	return res
+}
+
+func abs(n int) int {
+	if n > 0 {
+		return n
+	}
+	return -n
+}
