@@ -10,11 +10,8 @@ public:
 
   bool isValid(vector<vector<char>> &maze, vector<vector<bool>> &v, int i,
                int j, int m, int n) {
-    if (i >= 0 and i < n and j >= 0 and j < m and !v[i][j] and
-        maze[i][j] == '.') {
-      return true;
-    }
-    return false;
+    return i >= 0 and i < n and j >= 0 and j < m and !v[i][j] and
+           maze[i][j] == '.';
   }
 
   int nearestExit(vector<vector<char>> &maze, vector<int> &entrance) {
@@ -25,7 +22,6 @@ public:
     int dy[] = {0, 1, 0, -1};
 
     int x = entrance[0], y = entrance[1];
-
     queue<Lmao> q;
     int res = 1e9;
     q.push({x, y, 0});
@@ -36,10 +32,8 @@ public:
       int i = l.x, j = l.y, d = l.dist;
       if (((i == 0 || i == n - 1) || (j == 0 || j == m - 1)) and
           maze[i][j] == '.') {
-        if (i == x and j == y) {
-        } else {
-          res = d;
-          break;
+        if (!(i == x and j == y)) {
+          return d;
         }
       }
       for (int k = 0; k < 4; k++) {
@@ -50,7 +44,6 @@ public:
         }
       }
     }
-
-    return res == 1e9 ? -1 : res;
+    return -1;
   }
 };
