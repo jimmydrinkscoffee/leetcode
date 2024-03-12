@@ -1,57 +1,56 @@
 #include <queue>
-#include <utility>
 #include <vector>
 using namespace std;
 
 class Solution {
 public:
+  struct Lmao {
+    int x, y, dist;
+  };
+
+  bool isValid(vector<vector<char>> &maze, vector<vector<bool>> &v, int i,
+               int j, int m, int n) {
+    if (i >= 0 and i < n and j >= 0 and j < m and !v[i][j] and
+        maze[i][j] == '.') {
+      return true;
+    }
+    return false;
+  }
+
   int nearestExit(vector<vector<char>> &maze, vector<int> &entrance) {
-    vector<vector<bool>> v;
-    v.resize(maze.size(), vector<bool>(maze[0].size(), false));
-    queue<pair<int, int>> q;
-    v[entrance[0]][entrance[1]] = true;
-    q.push(make_pair(entrance[0], entrance[1]));
-    int l = q.size(), step = 1;
-    while (l > 0) {
-      for (auto i = 0; i < l; i++) {
-        auto pos = q.front();
-        q.pop();
+    int n = maze.size();
+    int m = maze[0].size();
+    vector<vector<bool>> v(n, vector<bool>(m, false));
+    int dx[] = {1, 0, -1, 0};
+    int dy[] = {0, 1, 0, -1};
 
-        vector<pair<int, int>> nexts = {
-            make_pair(pos.first + 1, pos.second),
-            make_pair(pos.first - 1, pos.second),
-            make_pair(pos.first, pos.second + 1),
-            make_pair(pos.first, pos.second - 1),
-        };
+    int x = entrance[0], y = entrance[1];
 
-        for (auto p : nexts) {
-          int x = p.first, y = p.second;
-          if (!isValid(maze, x, y) || v[x][y]) {
-            continue;
-          }
-
-          if (isExit(maze, x, y)) {
-            return step;
-          }
-
-          v[x][y] = true;
-          q.push(make_pair(x, y));
+    queue<Lmao> q;
+    int res = 1e9;
+    q.push({x, y, 0});
+    v[x][y] = true;
+    while (!q.empty()) {
+      Lmao l = q.front();
+      q.pop();
+      int i = l.x, j = l.y, d = l.dist;
+      if (((i == 0 || i == n - 1) || (j == 0 || j == m - 1)) and
+          maze[i][j] == '.') {
+        if (i == x and j == y) {
+        } else {
+          res = d;
+          break;
         }
       }
-      step++;
-      l = q.size();
+      for (int k = 0; k < 4; k++) {
+        int ni = i + dx[k], nj = j + dy[k];
+        if (isValid(maze, v, ni, nj, m, n)) {
+          v[ni][nj] = true;
+          q.push({ni, nj, d + 1});
+        }
+      }
     }
 
-    return -1;
-  }
-
-private:
-  bool isExit(vector<vector<char>> maze, int x, int y) {
-    return x == 0 || y == maze[0].size() - 1 || y == 0 || x == maze.size() - 1;
-  }
-
-  bool isValid(vector<vector<char>> maze, int x, int y) {
-    return x >= 0 && y >= 0 && y < maze[0].size() && x < maze.size() &&
-           maze[x][y] == '.';
+    return res == 1e9 ? -1 : res;
   }
 };
