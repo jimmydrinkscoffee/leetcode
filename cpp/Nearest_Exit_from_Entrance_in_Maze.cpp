@@ -4,7 +4,7 @@ using namespace std;
 
 class Solution {
 public:
-  struct Lmao {
+  struct Step {
     int x, y, dist;
   };
 
@@ -18,16 +18,17 @@ public:
     int n = maze.size();
     int m = maze[0].size();
     vector<vector<bool>> v(n, vector<bool>(m, false));
+
     int dx[] = {1, 0, -1, 0};
     int dy[] = {0, 1, 0, -1};
-
     int x = entrance[0], y = entrance[1];
-    queue<Lmao> q;
-    int res = 1e9;
+
+    queue<Step> q;
     q.push({x, y, 0});
     v[x][y] = true;
+
     while (!q.empty()) {
-      Lmao l = q.front();
+      Step l = q.front();
       q.pop();
       int i = l.x, j = l.y, d = l.dist;
       if (((i == 0 || i == n - 1) || (j == 0 || j == m - 1)) and
@@ -36,6 +37,7 @@ public:
           return d;
         }
       }
+
       for (int k = 0; k < 4; k++) {
         int ni = i + dx[k], nj = j + dy[k];
         if (isValid(maze, v, ni, nj, m, n)) {
@@ -44,6 +46,7 @@ public:
         }
       }
     }
+
     return -1;
   }
 };
