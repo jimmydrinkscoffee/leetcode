@@ -22,7 +22,7 @@ public:
 
   vector<string> letterCombinations(string digits) {
     if (digits.empty()) {
-      cout << "empty\n";
+      cout << endl;
       return {};
     }
 
