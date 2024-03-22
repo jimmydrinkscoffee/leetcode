@@ -1,12 +1,13 @@
 #include <algorithm>
+#include <cstring>
 #include <string>
 #include <vector>
 using namespace std;
 
 class Solution {
 public:
-  int longestCommonSubsequence(string s1, string s2) {
-    return iterativeTabulation(s1, s2);
+  int longestCommonSubsequence(string &s1, string &s2) {
+    return optimizeSpace(s1, s2);
   }
 
 private:
@@ -58,5 +59,23 @@ private:
       }
     }
     return v[0][0];
+  }
+
+  int optimizeSpace(string &s1, string &s2) {
+    int l1 = s1.length(), l2 = s2.length();
+    int cur[l2 + 1], prev[l2 + 1];
+    memset(cur, 0, sizeof(cur));
+    memset(prev, 0, sizeof(prev));
+    for (int i = l1 - 1; i >= 0; i--) {
+      for (int j = l2 - 1; j >= 0; j--) {
+        if (s1[i] == s2[j]) {
+          cur[j] = 1 + prev[j + 1];
+        } else {
+          cur[j] = max(prev[j], cur[j + 1]);
+        }
+      }
+      memcpy(prev, cur, sizeof(cur));
+    }
+    return prev[0];
   }
 };
