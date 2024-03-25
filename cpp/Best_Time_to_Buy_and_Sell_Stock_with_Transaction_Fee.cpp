@@ -7,6 +7,28 @@ using namespace std;
 class Solution {
 public:
   int maxProfit(vector<int> &prices, int fee) {
+    return recursive(prices, fee, prices.size(), 0, 0, 0);
+  }
+
+private:
+  int recursive(vector<int> &p, int f, int l, int i, int hold, int cash) {
+    if (i >= l) {
+      return cash;
+    }
+
+    if (hold == 0 || p[i] <= hold) {
+      return recursive(p, f, l, i + 1, p[i], cash);
+    }
+
+    int sell = recursive(p, f, l, i + 1, 0, cash + p[i] - hold - f);
+    int move = recursive(p, f, l, i + 1, hold, cash);
+
+    return max(sell, move);
+  }
+
+  int memoization(vector<int> &p, int f, int l, int i, int hold, int cash) {}
+
+  int naiveSol(vector<int> &prices, int fee) {
     int l = prices.size();
     queue<pair<int, int>> q;
     q.push({prices[0], 0});
