@@ -5,7 +5,7 @@ using namespace std;
 
 class Solution {
 public:
-  int minDistance(string word1, string word2) { return mem(word1, word2); }
+  int minDistance(string word1, string word2) { return optimize(word1, word2); }
 
 private:
   int recursive(string &s1, string &s2, int i1, int i2) {
@@ -54,5 +54,47 @@ private:
     }
 
     return v[i1][i2];
+  }
+
+  int tab(string &s1, string &s2) {
+    vector<vector<int>> v(s1.size() + 1, vector<int>(s2.size() + 1, 0));
+    for (int i = 0; i < s1.size(); i++) {
+      v[i][s2.size()] = s1.size() - i;
+    }
+    for (int j = 0; j < s2.size(); j++) {
+      v[s1.size()][j] = s2.size() - j;
+    }
+    for (int i = s1.size() - 1; i >= 0; i--) {
+      for (int j = s2.size() - 1; j >= 0; j--) {
+        if (s1[i] == s2[j]) {
+          v[i][j] = v[i + 1][j + 1];
+        } else {
+          v[i][j] = 1 + min(v[i + 1][j + 1], min(v[i + 1][j], v[i][j + 1]));
+        }
+      }
+    }
+    return v[0][0];
+  }
+
+  int optimize(string &s1, string &s2) {
+    int l1 = s1.size(), l2 = s2.size();
+    vector<vector<int>> v(2, vector<int>(l2 + 1));
+    for (int j = 0; j < l2; j++) {
+      v[1][j] = l2 - j;
+    }
+    int cur = 1;
+    for (int i = l1 - 1; i >= 0; i--) {
+      cur = 1 - cur;
+      v[cur][l2] = l1 - i;
+      for (int j = l2 - 1; j >= 0; j--) {
+        if (s1[i] == s2[j]) {
+          v[cur][j] = v[1 - cur][j + 1];
+        } else {
+          v[cur][j] =
+              1 + min(v[1 - cur][j + 1], min(v[1 - cur][j], v[cur][j + 1]));
+        }
+      }
+    }
+    return v[cur][0];
   }
 };
