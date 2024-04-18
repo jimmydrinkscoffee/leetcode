@@ -2,16 +2,28 @@ package main
 
 func maximalRectangle(matrix [][]byte) int {
 	ans := 0
-	h := make([]int, len(matrix[0]))
+	ht := make([]int, len(matrix[0])+1)
 	for _, r := range matrix {
 		for i, c := range r {
 			if c == '1' {
-				h[i]++
+				ht[i]++
 			} else {
-				h[i] = 0
+				ht[i] = 0
 			}
 		}
-		ans = max(ans, largestRectangleArea(h))
+		var stk []int
+		for i, h := range ht {
+			for len(stk) > 0 && h < ht[stk[len(stk)-1]] {
+				top := stk[len(stk)-1]
+				stk = stk[:len(stk)-1]
+				l := i
+				if len(stk) > 0 {
+					l = i - stk[len(stk)-1] - 1
+				}
+				ans = max(ans, ht[top]*l)
+			}
+			stk = append(stk, i)
+		}
 	}
 	return ans
 }
