@@ -11,24 +11,23 @@ func partition(s string) [][]string {
 		}
 		return true
 	}
-	var sol func(idx int, cur []string)
-	sol = func(idx int, cur []string) {
+	var cur []string
+	var sol func(idx int)
+	sol = func(idx int) {
 		if idx == len(s) {
 			cpy := make([]string, len(cur))
 			copy(cpy, cur)
 			ans = append(ans, cpy)
 			return
 		}
-		v := ""
 		for i := idx; i < len(s); i++ {
-			v += string(s[i])
-			if checkPal(v) {
-				cur = append(cur, v)
-				sol(i+1, cur)
+			if checkPal(s[idx : i+1]) {
+				cur = append(cur, s[idx:i+1])
+				sol(i + 1)
 				cur = cur[:len(cur)-1]
 			}
 		}
 	}
-	sol(0, []string{})
+	sol(0)
 	return ans
 }
