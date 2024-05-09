@@ -2,21 +2,15 @@ package main
 
 import "sort"
 
-func maximumHappinessSum(happiness []int, k int) int64 {
-	idx := make([]int, len(happiness))
-	for i := 0; i < len(idx); i++ {
-		idx[i] = i
-	}
-	sort.Slice(happiness, func(i, j int) bool {
-		return happiness[idx[i]] > happiness[idx[j]]
-	})
+func maximumHappinessSum(h []int, k int) int64 {
+	sort.Ints(h)
 	ans := int64(0)
-	for i := 0; i < k; i++ {
-		nx := int64(happiness[idx[i]] - i)
+	for i, j := 0, len(h)-1; i < k && j >= 0; i, j = i+1, j-1 {
+		nx := h[j] - i
 		if nx < 0 {
 			return ans
 		}
-		ans += nx
+		ans += int64(nx)
 	}
 	return ans
 }
