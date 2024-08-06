@@ -7,7 +7,22 @@ using namespace std;
 
 class Solution {
 public:
-  int minimumPushes(string word) {
+  int minimumPushes(string word) { return better(word); }
+
+  int better(string &word) {
+    vector<int> v(26, 0);
+    for (auto c : word) {
+      v[c - 'a']++;
+    }
+    sort(v.rbegin(), v.rend());
+    int ans = 0, btns = 8;
+    for (int i = 0; i < 26; i++) {
+      ans += (i / btns + 1) * v[i];
+    }
+    return ans;
+  }
+
+  int naive(string &word) {
     unordered_map<char, int> m;
     for (auto c : word) {
       m[c]++;
